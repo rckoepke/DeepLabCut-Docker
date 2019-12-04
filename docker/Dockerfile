@@ -12,14 +12,14 @@ ARG group_name=ubuntu
 ARG group_id=1000
 
 # create user
-RUN groupadd -g ${group_id} ${group_name}
-RUN useradd -u ${user_id} -g ${group_id} -d /home/${user_name} \
-    --create-home --shell /bin/bash ${user_name}
-RUN echo "${user_name} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-RUN chown -R ${user_name}:${group_name} /home/${user_name}
+RUN groupadd -g 1000 ubuntu
+RUN useradd -u 1000 -g 1000 -d /home/ubuntu \
+    --create-home --shell /bin/bash ubuntu
+RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN chown -R ubuntu:ubuntu /home/ubuntu
 
 # user settings
-ENV HOME /home/${user_name}
+ENV HOME /home/ubuntu
 ENV LANG en_US.UTF-8
 
 # Intall Anaconda
@@ -31,11 +31,11 @@ RUN echo 'export PATH=$HOME/anaconda3/bin:$PATH' > /etc/profile.d/anaconda.sh &&
 ENV PATH $HOME/anaconda3/bin:$PATH
 ENV LD_LIBRARY_PATH /usr/local/cuda-9.0/lib64:/usr/local/cuda-9.0/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 
-RUN chown -R ${user_name}:${group_name} $HOME/anaconda3
+RUN chown -R ubuntu:ubuntu $HOME/anaconda3
 
 ##### Install Deeplabcut and its dependencies #####
 
-USER ${user_name}
+USER ubuntu
 WORKDIR /work
 
 # Install DeepLabCut
