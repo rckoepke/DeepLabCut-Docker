@@ -11,15 +11,20 @@ ARG user_id=1000
 ARG group_name=ubuntu
 ARG group_id=1000
 
+RUN echo ${user_name}
+RUN echo ${user_id}
+RUN echo ${group_name}
+RUN echo ${group_id}
+
 # create user
-RUN groupadd -g 1000 ubuntu
-RUN useradd -u 1000 -g 1000 -d /home/ubuntu \
-    --create-home --shell /bin/bash ubuntu
-RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-RUN chown -R ubuntu:ubuntu /home/ubuntu
+RUN groupadd -g 1000 ${group_name}
+RUN useradd -u 1000 -g 1000 -d /home/${user_name} \
+    --create-home --shell /bin/bash ${user_name}
+RUN echo "${user_name} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN chown -R ${user_name}:${group_name} /home/${user_name}
 
 # user settings
-ENV HOME /home/ubuntu
+ENV HOME /home/${user_name}
 ENV LANG en_US.UTF-8
 
 # Intall Anaconda
@@ -31,11 +36,11 @@ RUN echo 'export PATH=$HOME/anaconda3/bin:$PATH' > /etc/profile.d/anaconda.sh &&
 ENV PATH $HOME/anaconda3/bin:$PATH
 ENV LD_LIBRARY_PATH /usr/local/cuda-9.0/lib64:/usr/local/cuda-9.0/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 
-RUN chown -R ubuntu:ubuntu $HOME/anaconda3
+RUN chown -R ${user_name}:${group_name} $HOME/anaconda3
 
 ##### Install Deeplabcut and its dependencies #####
 
-USER ubuntu
+USER ${user_name}
 WORKDIR /work
 
 # Install DeepLabCut
@@ -54,4 +59,3 @@ RUN sudo apt-get update --fix-missing && \
 
 WORKDIR /work
 CMD ["/bin/bash"]
-
